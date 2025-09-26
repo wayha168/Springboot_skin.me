@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.skin_me.model.Product;
 import com.project.skin_me.request.AddProductRequest;
+import com.project.skin_me.request.ProductUpdateRequest;
 
 public interface IProduceService {
     Product addProduct(AddProductRequest request);
@@ -12,7 +13,7 @@ public interface IProduceService {
 
     void deleteProductById(Long id);
 
-    void updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest request, Long productId);
 
     List<Product> getAllProducts();
 

@@ -1,14 +1,17 @@
 package com.project.skin_me.service.product;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.project.skin_me.exception.ProductNotFoundException;
 import com.project.skin_me.model.Category;
 import com.project.skin_me.model.Product;
+import com.project.skin_me.repository.CategoryRepository;
 import com.project.skin_me.repository.ProductRepository;
 import com.project.skin_me.request.AddProductRequest;
+import com.project.skin_me.request.ProductUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductService implements IProduceService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public String toString() {
@@ -26,8 +30,13 @@ public class ProductService implements IProduceService {
     @Override
     public Product addProduct(AddProductRequest request) {
         // check if the category is found in DB
-       
-        return null;
+        Category category = Optional.ofNullable(categoryRepository.findByname(request.getCategory().getName()))
+                .orElseGet(() -> {
+                    Category newCategory = new Category(request.getCategory().getName());
+                    return categoryRepository.save(newCategory);
+                });
+        request.setCategory(category);
+        return productRepository.save(createProduct(request, category));
 
     }
 
@@ -40,12 +49,10 @@ public class ProductService implements IProduceService {
                 request.getInventory(),
                 request.getDescription(),
                 category);
-
     }
 
     @Override
     public Product getProductById(Long id) {
-
         return productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
     }
@@ -59,9 +66,24 @@ public class ProductService implements IProduceService {
     }
 
     @Override
-    public void updateProduct(Product product, Long productId) {
-        // TODO Auto-generated method stub
+    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+       return productRepository.findById(productId)
+       .map(existingProduct -> updateExistingProduct(existingProduct, request))
+       .map(productRepository :: save)
+       .orElseThrow(() -> new ProductNotFoundException("Product not found!!"));
+    }
 
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
+        existingProduct.setName(request.getName());
+        existingProduct.setBrand(request.getBrand());
+        existingProduct.setPrice(request.getPrice());
+        existingProduct.setProductType(request.getProductType());
+        existingProduct.setInventory(request.getInventory());
+        existingProduct.setDescription(request.getDescription());
+
+        Category category = categoryRepository.findByname(request.getCategory().getName());
+        existingProduct.setCategory(category);
+        return existingProduct;
     }
 
     @Override
