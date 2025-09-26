@@ -1,10 +1,12 @@
 package com.project.skin_me.service.category;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.project.skin_me.model.Category;
+import com.project.skin_me.exception.AlreadyExistsException;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.repository.CategoryRepository;
 
@@ -24,32 +26,36 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category getCategoryByName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCategoryByName'");
+        return categoryRepository.findByname(name);
     }
 
     @Override
     public List<Category> getAllCategories() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllCategories'");
+        return categoryRepository.findAll();
     }
 
     @Override
     public Category addCategory(Category category) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addCategory'");
+        return Optional.of(category).filter(c -> !categoryRepository.existsByName(c.getName()))
+                .map(categoryRepository::save)
+                .orElseThrow(() -> new AlreadyExistsException(category.getName() + "already exists"));
     }
 
     @Override
-    public Category updateCategory(Category category) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updaetCategory'");
+    public Category updateCategory(Category category, Long id) {
+        return Optional.ofNullable(getCategoryById(id)).map(oldCategory -> {
+            oldCategory.setName(category.getName());
+            return categoryRepository.save(oldCategory);
+        }).orElseThrow(() -> new ResourceNotFoundException("Category not found!"));
     }
 
     @Override
     public void deleteCategoryById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteCategoryById'");
+        categoryRepository.findById(id)
+                .ifPresentOrElse(categoryRepository::delete,
+                        () -> {
+                            throw new ResourceNotFoundException("Category not found!");
+                        });
     }
 
 }
