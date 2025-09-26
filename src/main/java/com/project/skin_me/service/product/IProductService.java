@@ -6,7 +6,7 @@ import com.project.skin_me.model.Product;
 import com.project.skin_me.request.AddProductRequest;
 import com.project.skin_me.request.ProductUpdateRequest;
 
-public interface IProduceService {
+public interface IProductService {
     Product addProduct(AddProductRequest request);
 
     Product getProductById(Long id);
