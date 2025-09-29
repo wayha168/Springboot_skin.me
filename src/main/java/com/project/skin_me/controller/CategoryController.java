@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class CategoryController {
     private ICategoryService categoryService;
 
-    @GetMapping("/allcategories")
+    @GetMapping("/all-categories")
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<Category> categories = categoryService.getAllCategories();

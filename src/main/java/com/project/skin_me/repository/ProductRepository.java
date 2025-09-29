@@ -8,22 +8,19 @@ import com.project.skin_me.model.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByCategory(String category);
+    List<Product> findByCategory_Name(String categoryName);
+
+    List<Product> findByCategory_NameAndBrand(String categoryName, String brand);
 
     List<Product> findByBrand(String brand);
-
-    List<Product> findByCategoryAndBrand(String category, String brand);
-
-    List<Product> findByBrandAndName(String brand, String name);
-
-    List<Product> findByCategoryAndProductType(String category, String productType);
 
     List<Product> findByName(String name);
 
     List<Product> findByProductType(String productType);
 
+    List<Product> findByBrandAndName(String brand, String name);
+
     List<Product> findByProductTypeAndName(String productType, String name);
 
     Long countByBrandAndName(String brand, String name);
-
 }

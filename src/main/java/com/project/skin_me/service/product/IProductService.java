@@ -6,7 +6,7 @@ import com.project.skin_me.model.Product;
 import com.project.skin_me.request.AddProductRequest;
 import com.project.skin_me.request.ProductUpdateRequest;
 
-public interface IProductService {
+public interface IProductService{
     Product addProduct(AddProductRequest request);
 
     Product getProductById(Long id);
@@ -25,7 +25,7 @@ public interface IProductService {
 
     List<Product> getProductsByCategoryAndBrand(String category, String brand);
 
-    List<Product> getProductsByCategoryAndProductType(String category, String productType);
+    // List<Product> getProductsByCategoryAndProductType(String category, String productType);
 
     List<Product> getProductsByName(String name);
 

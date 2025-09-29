@@ -94,8 +94,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getAllProductsByCategory(String category) {
-
-        return productRepository.findByCategory(category);
+        return productRepository.findByCategory_Name(category);
     }
 
     @Override
@@ -116,18 +115,12 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-
-        return productRepository.findByCategoryAndBrand(category, brand);
+        return productRepository.findByCategory_NameAndBrand(category, brand);
     }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
         return productRepository.findByBrandAndName(brand, name);
-    }
-
-    @Override
-    public List<Product> getProductsByCategoryAndProductType(String category, String productType) {
-        return productRepository.findByCategoryAndProductType(category, productType);
     }
 
     @Override
@@ -140,5 +133,12 @@ public class ProductService implements IProductService {
 
         return productRepository.countByBrandAndName(brand, name);
     }
+
+    // @Override
+    // public List<Product> getProductsByCategoryAndProductType(String category,
+    // String productType) {
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'getProductsByCategoryAndProductType'");
+    // }
 
 }
