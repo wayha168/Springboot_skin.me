@@ -34,7 +34,7 @@ public class ProductController {
     @GetMapping("/products/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("message", products));
+        return ResponseEntity.ok(new ApiResponse("success", products));
     }
 
     @GetMapping("product/{productId}/product")

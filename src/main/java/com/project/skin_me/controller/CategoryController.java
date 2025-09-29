@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
+
     private ICategoryService categoryService;
 
     @GetMapping("/all-categories")
