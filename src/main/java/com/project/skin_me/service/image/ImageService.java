@@ -24,7 +24,7 @@ import com.project.skin_me.service.product.IProductService;
 public class ImageService implements IImageService {
 
     private final ImageRepository imageRepository;
-    private IProductService productService;
+    private final IProductService productService;
 
     @Override
     public Image getImageById(Long id) {
@@ -40,8 +40,9 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
+    public List<ImageDto> saveImages(Long productId, List<MultipartFile> files) {
         Product product = productService.getProductById(productId);
+
         List<ImageDto> saveImageDto = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
