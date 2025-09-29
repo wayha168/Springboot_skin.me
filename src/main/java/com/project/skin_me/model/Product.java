@@ -3,6 +3,8 @@ package com.project.skin_me.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +35,7 @@ public class Product {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties("products")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -40,13 +43,13 @@ public class Product {
 
     public Product(String name, String brand, BigDecimal price,
             String productType, int inventory, String description, Category category) {
-                this.name = name;
-                this.brand = brand;
-                this.price = price;
-                this.productType = productType;
-                this.inventory = inventory;
-                this.description = description;
-                this.category = category;
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.productType = productType;
+        this.inventory = inventory;
+        this.description = description;
+        this.category = category;
     }
 
 }

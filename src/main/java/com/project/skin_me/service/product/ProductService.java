@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.project.skin_me.dto.ProductDto;
 import com.project.skin_me.exception.ProductNotFoundException;
+import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Category;
 import com.project.skin_me.model.Product;
 import com.project.skin_me.repository.CategoryRepository;
@@ -23,8 +25,8 @@ public class ProductService implements IProductService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public String toString() {
-        return super.toString();
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
     }
 
     @Override
@@ -66,9 +68,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+    public Product updateProduct(ProductUpdateRequest product, Long productId) {
         return productRepository.findById(productId)
-                .map(existingProduct -> updateExistingProduct(existingProduct, request))
+                .map(existingProduct -> updateExistingProduct(existingProduct, product))
                 .map(productRepository::save)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found!!"));
     }
@@ -84,12 +86,6 @@ public class ProductService implements IProductService {
         Category category = categoryRepository.findByname(request.getCategory().getName());
         existingProduct.setCategory(category);
         return existingProduct;
-    }
-
-    @Override
-    public List<Product> getAllProducts() {
-
-        return productRepository.findAll();
     }
 
     @Override
@@ -132,6 +128,12 @@ public class ProductService implements IProductService {
     public Long countProductsByBrandAndName(String brand, String name) {
 
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getConvertedProducts'");
     }
 
     // @Override

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+// import com.project.skin_me.dto.ProductDto;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Product;
 import com.project.skin_me.request.AddProductRequest;
@@ -31,13 +32,13 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @GetMapping("/products/all")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(new ApiResponse("success", products));
     }
 
-    @GetMapping("product/{productId}/product")
+    @GetMapping("{productId}/product")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
         try {
             Product product = productService.getProductById(productId);
@@ -48,25 +49,29 @@ public class ProductController {
 
     }
 
-    @GetMapping("product/by-product-type")
-    public ResponseEntity<ApiResponse> getProductsByProductType(@PathVariable String productType) {
+    @GetMapping("product/by-producttype")
+    public ResponseEntity<ApiResponse> getProductsByProductType(@RequestParam String productType) {
         try {
-            List<Product> product = productService.getProductsByProductType(productType);
-            return ResponseEntity.ok(new ApiResponse("sucsess", product));
+            List<Product> products = productService.getProductsByProductType(productType);
+            return ResponseEntity.ok(new ApiResponse("sucsess", products));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
 
     }
 
-    @GetMapping("/product/by-brand/")
-    public ResponseEntity<ApiResponse> getProductsByBrand(@PathVariable String productBrand) {
+    @GetMapping("/product/by-brand")
+    public ResponseEntity<ApiResponse> findProductByBrand(@RequestParam String brand) {
         try {
-            List<Product> products = productService.getProductsByBrand(productBrand);
-            if (products.isEmpty()) {
-
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("success", null));
+            if (brand == null || brand.isBlank()) {
+                return ResponseEntity.badRequest().body(new ApiResponse("Brand must be provided!", null));
             }
+            List<Product> products = productService.getProductsByBrand(brand);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found!", null));
+            }
+            // List<ProductDto> convertedProducts =
+            // productService.getConvertedProducts(products);
             return ResponseEntity.ok(new ApiResponse("success", products));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -105,7 +110,7 @@ public class ProductController {
     }
 
     @GetMapping("/product/by-brand-and-name/")
-    public ResponseEntity<ApiResponse> getProductByBrandAndName(@RequestParam String productName,
+    public ResponseEntity<ApiResponse> findProductByBrandAndName(@RequestParam String productName,
             @RequestParam String productBrand) {
         try {
             List<Product> products = productService.getProductsByBrandAndName(productName, productBrand);
