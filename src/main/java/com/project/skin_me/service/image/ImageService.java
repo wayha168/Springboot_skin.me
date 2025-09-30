@@ -1,11 +1,8 @@
 package com.project.skin_me.service.image;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.rowset.serial.SerialBlob;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

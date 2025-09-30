@@ -1,7 +1,5 @@
 package com.project.skin_me.model;
 
-import javax.sql.rowset.serial.SerialBlob;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
