@@ -1,7 +1,10 @@
 package com.project.skin_me.model;
 
-import java.sql.Blob;
+import javax.sql.rowset.serial.SerialBlob;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,10 +31,12 @@ public class Image {
     private String fileType;
 
     @Lob
-    private Blob image;
+    @Column(columnDefinition = "LONGBLOB") // for MySQL
+    private byte[] image;
     private String downloadUrl;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnore
     private Product product;
 }
