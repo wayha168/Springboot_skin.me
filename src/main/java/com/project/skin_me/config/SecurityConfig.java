@@ -1,5 +1,6 @@
 package com.project.skin_me.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,8 +14,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // disable CSRF for Postman testing
                 .authorizeHttpRequests(auth -> auth
-                                .anyRequest().permitAll() // allow all requests without authentication
+                        .anyRequest().permitAll() // allow all requests without authentication
                 );
         return http.build();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

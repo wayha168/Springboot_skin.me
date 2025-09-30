@@ -8,6 +8,7 @@ import com.project.skin_me.request.AddProductRequest;
 import com.project.skin_me.request.ProductUpdateRequest;
 
 public interface IProductService {
+    
     Product addProduct(AddProductRequest request);
 
     Product getProductById(Long id);
@@ -36,6 +37,8 @@ public interface IProductService {
     List<Product> getProductsByProductTypeAndName(String productType, String name);
 
     Long countProductsByBrandAndName(String brand, String name);
+
+    ProductDto convertToDto(Product product);
 
     List<ProductDto> getConvertedProducts(List<Product> products);
 

@@ -3,14 +3,18 @@ package com.project.skin_me.service.product;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.project.skin_me.dto.ImageDto;
 import com.project.skin_me.dto.ProductDto;
 import com.project.skin_me.exception.ProductNotFoundException;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Category;
+import com.project.skin_me.model.Image;
 import com.project.skin_me.model.Product;
 import com.project.skin_me.repository.CategoryRepository;
+import com.project.skin_me.repository.ImageRepository;
 import com.project.skin_me.repository.ProductRepository;
 import com.project.skin_me.request.AddProductRequest;
 import com.project.skin_me.request.ProductUpdateRequest;
@@ -23,6 +27,8 @@ public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<Product> getAllProducts() {
@@ -127,14 +133,30 @@ public class ProductService implements IProductService {
 
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
-
         return productRepository.countByBrandAndName(brand, name);
     }
 
     @Override
     public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
+    }
 
-        throw new UnsupportedOperationException("Unimplemented method 'getConvertedProducts'");
+    @Override
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream().map(image -> {
+            ImageDto dto = new ImageDto();
+            dto.setImageId(image.getId());
+            dto.setFileName(image.getFileName());
+            dto.setDownloadUrl(image.getDownloadUrl());
+            return dto;
+        }).toList();
+
+        productDto.setImages(imageDtos);
+
+        return productDto;
     }
 
     // @Override
