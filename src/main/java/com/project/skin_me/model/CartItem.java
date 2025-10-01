@@ -6,11 +6,11 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class CartItem {
 
     @Id
@@ -31,7 +31,7 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    public void SetTotalPrice() {
+    public void setTotalPrice() {
         this.totalPrice = this.unitPrice.multiply(new BigDecimal(quantity));
     }
 
