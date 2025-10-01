@@ -7,6 +7,7 @@ import com.project.skin_me.model.Product;
 import com.project.skin_me.repository.CartItemRepository;
 import com.project.skin_me.repository.CartRepository;
 import com.project.skin_me.service.product.IProductService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,35 +20,33 @@ public class CartItemService implements ICartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
     private final IProductService productService;
-    private final CartService cartService;
+    private final ICartService cartService;
 
     @Override
+    @Transactional
     public void addItemToCart(Long cartId, Long productId, int quantity) {
-        //1. Get the cart , 2. Get the product 3. check if product already in the cart then if yes increase the quantity
-        //5. if no the initiate a new cartItem  entry
-
-        Cart cart = cartService.getCart(cartId);
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
         Product product = productService.getProductById(productId);
-        CartItem cartItem = cart.getItems()
-                .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst().orElse(new CartItem());
 
-        if (cartItem.getId() == null) {
+        CartItem cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+
+        if (cartItem == null) {
+            cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(product.getPrice());
-        }
-        else {
+            cart.addItem(cartItem);  // new item added to cart
+        } else {
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
 
-        cartItem.setTotalPrice();
-        cart.addItem(cartItem);
-        cartItemRepository.save(cartItem);
-        cartRepository.save(cart);
-
+        cartItem.setTotalPrice(); // calculate total
+        cartRepository.save(cart); // save cart + items (cascade)
     }
 
     @Override
