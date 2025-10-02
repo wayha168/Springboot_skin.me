@@ -21,9 +21,7 @@ public class CartItemController {
                                                      @RequestParam Long productId,
                                                      @RequestParam Integer quantity){
         try {
-            if (cartId == null) {
-                cartId = cartService.initializeNewCart();
-            }
+            if (cartId == null) cartId = cartService.initializeNewCart();
 
             cartItemService.addItemToCart(cartId, productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add Item success", null));

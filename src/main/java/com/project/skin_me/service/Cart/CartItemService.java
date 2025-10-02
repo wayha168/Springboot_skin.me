@@ -23,7 +23,6 @@ public class CartItemService implements ICartItemService {
     private final ICartService cartService;
 
     @Override
-    @Transactional
     public void addItemToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
@@ -46,6 +45,7 @@ public class CartItemService implements ICartItemService {
         }
 
         cartItem.setTotalPrice(); // calculate total
+        recalculateCartTotal(cart);
         cartRepository.save(cart); // save cart + items (cascade)
     }
 
@@ -81,5 +81,12 @@ public class CartItemService implements ICartItemService {
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst().orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+    }
+
+    private void recalculateCartTotal(Cart cart) {
+        BigDecimal total = cart.getItems().stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cart.setTotalAmount(total);
     }
 }
