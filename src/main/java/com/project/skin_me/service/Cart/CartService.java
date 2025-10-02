@@ -4,7 +4,6 @@ import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Cart;
 import com.project.skin_me.repository.CartItemRepository;
 import com.project.skin_me.repository.CartRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +20,8 @@ public class CartService implements ICartService {
 
     @Override
     public Cart getCart(Long id) {
-        Cart cart = cartRespository.findById(id)
+        return cartRespository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
-
-        BigDecimal totalAmount = cart.getTotalAmount();
-        cart.setTotalAmount(totalAmount);
-        return cartRespository.save(cart);
     }
 
     @Override
@@ -45,7 +40,7 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public Long initializeNewCart(){
+    public Long initializeNewCart() {
         Cart newCart = new Cart();
         Long newCartId = cartIdGenerator.incrementAndGet();
         newCart.setId(newCartId);
