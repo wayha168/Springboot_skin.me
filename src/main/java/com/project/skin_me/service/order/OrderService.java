@@ -8,11 +8,14 @@ import com.project.skin_me.model.OrderItem;
 import com.project.skin_me.model.Product;
 import com.project.skin_me.repository.OrderRepository;
 import com.project.skin_me.repository.ProductRepository;
+import com.project.skin_me.service.Cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -21,11 +24,22 @@ public class OrderService implements IOrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final CartService cartService;
 
 
     @Override
+    @Transactional
     public Order placeOrderItem(Long userId) {
-        return null;
+        Cart cart = cartService.getCartByUserId(userId);
+        Order order = createOrder(cart);
+
+        List<OrderItem> orderItemList = createOrderItems(order, cart);
+        order.setOrderItems(new HashSet<>(orderItemList));
+        order.setOrderTotalAmount(calculateTotalAmount(orderItemList));
+        Order savedOrder = orderRepository.save(order);
+        cartService.removeCart(cart.getId());
+
+        return  savedOrder;
     }
 
     private Order createOrder(Cart cart) {
@@ -59,6 +73,10 @@ public class OrderService implements IOrderService {
     @Override
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No Order found"));
+    }
+
+    public List<Order> getUserOrders(Long userId){
+        return orderRepository.findByUserId(userId);
     }
 }
