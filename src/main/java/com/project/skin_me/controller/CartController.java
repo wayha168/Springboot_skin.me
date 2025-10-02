@@ -28,10 +28,14 @@ public class CartController {
         }
     }
 
-    @DeleteMapping("/{cartId}/remove-cart")
+    @DeleteMapping("/{cartId}/clear")
     public ResponseEntity<ApiResponse> clearCart(@PathVariable Long cartId) {
+        try {
             cartService.removeCart(cartId);
             return ResponseEntity.ok(new ApiResponse("Remove Cart success", null));
+        } catch (ResourceNotFoundException e) {
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 
     @GetMapping("/{cartId}/cart/total-price")
