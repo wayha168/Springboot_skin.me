@@ -23,6 +23,7 @@ public class CartItemService implements ICartItemService {
     private final ICartService cartService;
 
     @Override
+    @Transactional
     public void addItemToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
