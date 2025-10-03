@@ -1,5 +1,6 @@
 package com.project.skin_me.service.user;
 
+import com.project.skin_me.dto.UserDto;
 import com.project.skin_me.exception.AlreadyExistsException;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.User;
@@ -7,6 +8,7 @@ import com.project.skin_me.repository.UserRepository;
 import com.project.skin_me.request.CreateUserRequest;
 import com.project.skin_me.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements IUserService{
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -55,6 +58,11 @@ public class UserService implements IUserService{
                  throw new ResourceNotFoundException("User not found!");
                 });
 
+    }
+
+    @Override
+    public UserDto convertUserToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 
 }

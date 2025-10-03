@@ -1,5 +1,6 @@
 package com.project.skin_me.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.skin_me.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

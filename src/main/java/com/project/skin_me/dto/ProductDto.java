@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDto {
+
     private Long id;
     private String name;
     private String brand;
@@ -21,7 +22,6 @@ public class ProductDto {
     private int inventory;
     private String description;
     private Category category;
-
     private List<ImageDto> images; 
 
 }

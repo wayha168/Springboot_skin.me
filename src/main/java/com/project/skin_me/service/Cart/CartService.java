@@ -2,6 +2,7 @@ package com.project.skin_me.service.Cart;
 
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Cart;
+import com.project.skin_me.model.User;
 import com.project.skin_me.repository.CartItemRepository;
 import com.project.skin_me.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -42,10 +44,13 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public Long initializeNewCart() {
-        Cart newCart = new Cart();
-        newCart.setTotalAmount(BigDecimal.ZERO);
-        return cartRespository.save(newCart).getId();
+    public Cart initializeNewCart(User user) {
+        return Optional.ofNullable(getCartByUserId(user.getId()))
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUser(user);
+                    return cartRespository.save(cart);
+                });
     }
 
     @Override

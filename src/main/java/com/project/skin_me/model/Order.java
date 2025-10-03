@@ -1,8 +1,8 @@
 package com.project.skin_me.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.skin_me.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -27,9 +28,10 @@ public class Order {
     private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 }

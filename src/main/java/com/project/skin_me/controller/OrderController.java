@@ -1,5 +1,6 @@
 package com.project.skin_me.controller;
 
+import com.project.skin_me.dto.OrderDto;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Order;
 import com.project.skin_me.request.UserUpdateRequest;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +23,8 @@ public class OrderController {
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
             Order order = orderService.placeOrderItem(userId);
-            return ResponseEntity.ok(new ApiResponse("Order successfully", order));
+            OrderDto orderDto = orderService.convertToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Order successfully", orderDto));
         } catch (Exception e) {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(e.getMessage(), "Error Occurred!"));
@@ -30,8 +34,19 @@ public class OrderController {
     @GetMapping("{orderId}/order")
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOrder(orderId);
+            OrderDto order = orderService.getOrder(orderId);
             return ResponseEntity.ok(new ApiResponse("Order successfully!", order));
+        } catch (ResourceNotFoundException e) {
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Oops! ", e.getMessage()));
+        }
+    }
+
+    @GetMapping("{userID}/orders")
+    public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
+        try {
+            List<OrderDto> order = orderService.getUserOrders(userId);
+            return ResponseEntity.ok(new ApiResponse("Order success!", order));
         } catch (ResourceNotFoundException e) {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Oops! ", e.getMessage()));
