@@ -37,7 +37,7 @@ public class UserService implements IUserService{
                     user.setConfirmPassword(request.getConfirmPassword());
                     user.setFirstName(request.getFirstName());
                     user.setLastName(request.getLastName());
-                    user.setRole(request.getRole());
+//                    user.setRole(request.getRole());
                     return user;
                 }).orElseThrow(() -> new AlreadyExistsException("User already exists" + request.getEmail()));
     }

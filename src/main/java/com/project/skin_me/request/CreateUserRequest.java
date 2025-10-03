@@ -1,6 +1,6 @@
 package com.project.skin_me.request;
 
-import com.project.skin_me.enums.Role;
+import com.project.skin_me.model.Role;
 import lombok.Data;
 
 @Data
