@@ -1,6 +1,7 @@
 package com.project.skin_me.controller;
 
 import com.project.skin_me.dto.OrderDto;
+import com.project.skin_me.exception.AlreadyExistsException;
 import com.project.skin_me.exception.ResourceNotFoundException;
 import com.project.skin_me.model.Order;
 import com.project.skin_me.request.UserUpdateRequest;
@@ -12,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,8 +29,8 @@ public class OrderController {
             Order order = orderService.placeOrderItem(userId);
             OrderDto orderDto = orderService.convertToDto(order);
             return ResponseEntity.ok(new ApiResponse("Order successfully", orderDto));
-        } catch (Exception e) {
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        } catch (AlreadyExistsException e) {
+            return  ResponseEntity.status(CONFLICT)
                     .body(new ApiResponse(e.getMessage(), "Error Occurred!"));
         }
     }
@@ -37,7 +41,7 @@ public class OrderController {
             OrderDto order = orderService.getOrder(orderId);
             return ResponseEntity.ok(new ApiResponse("Order successfully!", order));
         } catch (ResourceNotFoundException e) {
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return  ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Oops! ", e.getMessage()));
         }
     }
@@ -48,7 +52,7 @@ public class OrderController {
             List<OrderDto> order = orderService.getUserOrders(userId);
             return ResponseEntity.ok(new ApiResponse("Order success!", order));
         } catch (ResourceNotFoundException e) {
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return  ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Oops! ", e.getMessage()));
         }
     }

@@ -3,6 +3,7 @@ package com.project.skin_me.service.product;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.skin_me.exception.AlreadyExistsException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,11 @@ public class ProductService implements IProductService {
     @Override
     public Product addProduct(AddProductRequest request) {
         // check if the category is found in DB
+
+        if (productExists(request.getBrand(), request.getName())) {
+            throw new AlreadyExistsException(request.getBrand() + " " + request.getName() + " already exists, you might need to update");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByname(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -46,6 +52,10 @@ public class ProductService implements IProductService {
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
 
+    }
+
+    private boolean productExists(String brand, String name) {
+        return productRepository.existsByNameAndBrand(name, brand);
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
